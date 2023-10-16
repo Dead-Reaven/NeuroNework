@@ -4,8 +4,18 @@ import numpy as np
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
+# Производная сигмоидной функции
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
 # Входные данные (XOR операция)
-data_set = np.array(
+# два входных нейронна
+
+"""
+  В данной нейросети топология следующая: два входных нейрона,
+  один скрытый слой с двумя нейронами и один выходной нейрон
+"""
+initial_layer = np.array(
   [
     [0, 0],
     [0, 1],
@@ -15,86 +25,55 @@ data_set = np.array(
 )
 
 # Выходные данные (результат XOR)
+# виходной нейрон
 output_set = np.array(
   [
-    0,
-    1,
-    1,
-    0
+    [0],
+    [1],
+    [1],
+    [0]
   ])
 
 # Инициализация весов и смещения
-np.random.seed(0)
-weights = 2 * np.random.random((2, 1)) - 1
-bias = 2 * np.random.random(1) - 1
+np.random.seed(0) # базовое значение для случайных чисел = 0
+weights0 = 2 * np.random.random((2, 2)) - 1
+weights1 = 2 * np.random.random((2, 1)) - 1
 
 # Коэффициент обучения
-learning_rate = 0.0001
+learning_rate = 0.9
 
-# Для отслеживания точности и ошибки
-accuracy = []
-loss = []
+# Количество итераций обучения
+iterations = 10_000
 
 # Обучение нейросети
-for i in range(4):
+for i in range(iterations):
     # Прямое распространение (вычисление предсказаний)
-    input_layer = data_set
-    output = sigmoid(np.dot(input_layer, weights) + bias)
+
+    hidden_layer = sigmoid(np.dot(initial_layer, weights0))
+    output = sigmoid(np.dot(hidden_layer, weights1))
 
     # Вычисление ошибки
-    error = output_set.reshape(-1, 1) - output
-
-    # Средняя ошибка (loss)
-    mean_loss = np.mean(np.abs(error))
-    loss.append(mean_loss)
-
-    # Точность (accuracy)
-    correct_predictions = np.sum(np.round(output) == output_set)
-    acc = correct_predictions / len(output_set)
-    accuracy.append(acc)
+    error_output = output_set - output
+    error_hidden = np.dot(error_output, weights1.T)
 
     # Обратное распространение (обновление весов)
-    d_output = error * (output * (1 - output))
-    weights += np.dot(input_layer.T, d_output) * learning_rate
-    bias += np.sum(d_output) * learning_rate
+    d_output = error_output * sigmoid_derivative(output)
+    d_hidden = error_hidden * sigmoid_derivative(hidden_layer)
 
+    weights1 += np.dot(hidden_layer.T, d_output) * learning_rate
+    weights0 += np.dot(initial_layer.T, d_hidden) * learning_rate
 
 
 # Вывод предсказаний
 print("Предсказания после обучения:")
 print(output)
 
-val1 = input('enter value:')
-val2 = input('enter value:')
-testArray = [int(val1),int(val2)]
+testArray = [
+  int(input('Введите значение:')),
+  int(input('Введите значение:'))]
 
 # Примеры предсказаний
 new_input = np.array(testArray)  # Пример входных данных для предсказания
-prediction = sigmoid(np.dot(new_input, weights) + bias)
-print(f"Предсказание для {testArray}: {prediction[0]}")
-
-
-
-
-
-
-
-
-
-import matplotlib.pyplot as plt
-
-# Визуализация точности и ошибки
-plt.figure(figsize=(12, 4))
-plt.subplot(1, 2, 1)
-plt.plot(accuracy)
-plt.title("Точность обучения")
-plt.xlabel("Итерации")
-plt.ylabel("Точность")
-
-plt.subplot(1, 2, 2)
-plt.plot(loss)
-plt.title("Ошибка обучения")
-plt.xlabel("Итерации")
-plt.ylabel("Ошибка")
-
-plt.show()
+hidden_layer = sigmoid(np.dot(new_input, weights0))
+prediction = sigmoid(np.dot(hidden_layer, weights1))
+print(f"Предсказание для {testArray}: {prediction[0]:.{2}}")
