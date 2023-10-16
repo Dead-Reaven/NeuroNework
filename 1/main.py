@@ -9,12 +9,6 @@ def sigmoid_derivative(x):
     return x * (1 - x)
 
 # Входные данные (XOR операция)
-# два входных нейронна
-
-"""
-  В данной нейросети топология следующая: два входных нейрона,
-  один скрытый слой с двумя нейронами и один выходной нейрон
-"""
 initial_layer = np.array(
   [
     [0, 0],
@@ -25,8 +19,7 @@ initial_layer = np.array(
 )
 
 # Выходные данные (результат XOR)
-# виходной нейрон
-output_set = np.array(
+reference = np.array(
   [
     [0],
     [1],
@@ -43,18 +36,21 @@ weights1 = 2 * np.random.random((2, 1)) - 1
 learning_rate = 0.9
 
 # Количество итераций обучения
-iterations = 10_000
+iterations = 19_500
+
+# История ошибок
+history = []
 
 # Обучение нейросети
 for i in range(iterations):
     # Прямое распространение (вычисление предсказаний)
-
     hidden_layer = sigmoid(np.dot(initial_layer, weights0))
     output = sigmoid(np.dot(hidden_layer, weights1))
 
     # Вычисление ошибки
-    error_output = output_set - output
+    error_output = reference - output
     error_hidden = np.dot(error_output, weights1.T)
+
 
     # Обратное распространение (обновление весов)
     d_output = error_output * sigmoid_derivative(output)
@@ -63,17 +59,31 @@ for i in range(iterations):
     weights1 += np.dot(hidden_layer.T, d_output) * learning_rate
     weights0 += np.dot(initial_layer.T, d_hidden) * learning_rate
 
+    # Добавляем ошибку в историю для последующего анализа
+    history.append(np.mean(abs(error_output)))
 
 # Вывод предсказаний
 print("Предсказания после обучения:")
 print(output)
 
-testArray = [
-  int(input('Введите значение:')),
-  int(input('Введите значение:'))]
+# testArray = [
+#   int(input('Введите значение:')),
+#   int(input('Введите значение:'))]
 
-# Примеры предсказаний
-new_input = np.array(testArray)  # Пример входных данных для предсказания
-hidden_layer = sigmoid(np.dot(new_input, weights0))
-prediction = sigmoid(np.dot(hidden_layer, weights1))
-print(f"Предсказание для {testArray}: {prediction[0]:.{2}}")
+# # Примеры предсказаний
+# new_input = np.array(testArray)
+# hidden_layer = sigmoid(np.dot(new_input, weights0))
+# prediction = sigmoid(np.dot(hidden_layer, weights1))
+# print(f"Предсказание для {testArray}: {prediction[0]:.{2}}")
+
+
+# График истории точности
+import matplotlib.pyplot as plt
+plt.plot(history)
+plt.legend([f'min:{min(history)}; max:{max(history)}'])
+plt.title('История точности')
+plt.xlabel('Поколения')
+plt.ylabel('error')
+plt.show()
+
+
