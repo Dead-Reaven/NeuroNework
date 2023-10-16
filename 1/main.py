@@ -1,14 +1,14 @@
 import numpy as np
 
-# Функция активации (сигмоидная функция)
+# Функція активації (сигмоїдна функція)
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-# Производная сигмоидной функции
+# Похідна сигмоїдної функції
 def sigmoid_derivative(x):
     return x * (1 - x)
 
-# Входные данные (XOR операция)
+# Вхідні дані (операція XOR)
 initial_layer = np.array(
   [
     [0, 0],
@@ -18,7 +18,7 @@ initial_layer = np.array(
   ]
 )
 
-# Выходные данные (результат XOR)
+# Вихідні дані (результат XOR)
 reference = np.array(
   [
     [0],
@@ -27,63 +27,61 @@ reference = np.array(
     [0]
   ])
 
-# Инициализация весов и смещения
-np.random.seed(0) # базовое значение для случайных чисел = 0
+# Ініціалізація ваг та зміщення
+np.random.seed(0) # базове значення для випадкових чисел = 0
 weights0 = 2 * np.random.random((2, 2)) - 1
 weights1 = 2 * np.random.random((2, 1)) - 1
 
-# Коэффициент обучения
+# Коефіцієнт навчання
 learning_rate = 0.9
 
-# Количество итераций обучения
+# Кількість ітерацій навчання
 iterations = 19_500
 
-# История ошибок
+# Історія помилок
 history = []
 
-# Обучение нейросети
+# Навчання нейромережі
 for i in range(iterations):
-    # Прямое распространение (вычисление предсказаний)
+    # Пряме поширення (обчислення прогнозувань)
     hidden_layer = sigmoid(np.dot(initial_layer, weights0))
     output = sigmoid(np.dot(hidden_layer, weights1))
 
-    # Вычисление ошибки
+    # Обчислення помилки
     error_output = reference - output
     error_hidden = np.dot(error_output, weights1.T)
 
 
-    # Обратное распространение (обновление весов)
+    # Зворотнє поширення (оновлення ваг)
     d_output = error_output * sigmoid_derivative(output)
     d_hidden = error_hidden * sigmoid_derivative(hidden_layer)
 
     weights1 += np.dot(hidden_layer.T, d_output) * learning_rate
     weights0 += np.dot(initial_layer.T, d_hidden) * learning_rate
 
-    # Добавляем ошибку в историю для последующего анализа
+    # Додаємо помилку до історії для подальшого аналізу
     history.append(np.mean(abs(error_output)))
 
-# Вывод предсказаний
-print("Предсказания после обучения:")
+# Виведення прогнозувань
+print("Прогнозування після навчання:")
 print(output)
 
-# testArray = [
-#   int(input('Введите значение:')),
-#   int(input('Введите значение:'))]
+testArray = [
+  int(input('Введіть значення:')),
+  int(input('Введіть значення:'))]
 
-# # Примеры предсказаний
-# new_input = np.array(testArray)
-# hidden_layer = sigmoid(np.dot(new_input, weights0))
-# prediction = sigmoid(np.dot(hidden_layer, weights1))
-# print(f"Предсказание для {testArray}: {prediction[0]:.{2}}")
+# Приклади прогнозувань
+new_input = np.array(testArray)
+hidden_layer = sigmoid(np.dot(new_input, weights0))
+prediction = sigmoid(np.dot(hidden_layer, weights1))
+print(f"Прогноз для {testArray}: {prediction[0]:.{2}}")
 
-
-# График истории точности
 import matplotlib.pyplot as plt
+
+# Графік історії точності
 plt.plot(history)
 plt.legend([f'min:{min(history)}; max:{max(history)}'])
-plt.title('История точности')
-plt.xlabel('Поколения')
-plt.ylabel('error')
+plt.title('Історія точності')
+plt.xlabel('Покоління')
+plt.ylabel('Помилка')
 plt.show()
-
-
