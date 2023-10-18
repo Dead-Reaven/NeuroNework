@@ -62,7 +62,7 @@ for epoch in range(epochs):
         #перетворює зображення/метку в двовимірний масив з одним стовпцем
         image = np.reshape(image, (-1,1))
         label = np.reshape(label, (-1,1))
-
+        print(image)
         # Пряме поширення
         hidden, output = forward_propagation(
           image,
@@ -131,3 +131,4 @@ def checkNN():
     plt.show()
 
 checkNN()
+
