@@ -42,9 +42,6 @@ output_neurons = 1  # result neuron
 epochs = 50 # or 250
 learning_rate = 0.3 # or 0.1
 
-# Створення списку для зберігання точності на кожній епохі
-accuracy_list = []
-
 neurons_input_to_hidden =  (hidden_neurons, input_neurons)
 neurons_hidden_to_output = (output_neurons, hidden_neurons)
 
@@ -55,6 +52,9 @@ weight_hidden_to_output = np.random.uniform(-0.5, 1.5, neurons_hidden_to_output 
 # нейрони зміщення
 bias_input_to_hidden = np.zeros((hidden_neurons,1))
 bias_hidden_to_output = np.zeros((output_neurons,output_neurons))
+
+# Створення списку для зберігання точності на кожній епохі
+accuracy_list = []
 
 for epoch in range(epochs):
     correct_predictions = 0

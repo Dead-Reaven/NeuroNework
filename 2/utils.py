@@ -1,9 +1,5 @@
 import numpy as np
-import random
-import matplotlib.pyplot as plt
 
-#
-# Загрузка набора данных
 def load_dataset():
     initial_layer = [
       np.array([
