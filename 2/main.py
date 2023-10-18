@@ -20,11 +20,20 @@ def backward_propagation(label, hidden, output, weight_hidden_to_output):
     delta_hidden = np.transpose(weight_hidden_to_output) @ delta_output * (hidden * (1 - hidden))
     return delta_output, delta_hidden
 
+# Оновлення ваг і зсувів
+def update_weights_biases(learning_rate, delta_output, delta_hidden, hidden, image):
+    global weight_hidden_to_output, bias_hidden_to_output
+    global weight_input_to_hidden, bias_input_to_hidden
+
+    weight_hidden_to_output += -learning_rate * np.dot(delta_output, hidden.T)
+    bias_hidden_to_output += -learning_rate * delta_output
+    weight_input_to_hidden += -learning_rate * np.dot(delta_hidden, image.T)
+    bias_input_to_hidden += -learning_rate * delta_hidden
+
 # Завантаження набору даних
 # зображення в форматі вектора / еталон
 images, labels = utils.load_dataset()
 
-# Ініціалізація ваг. генеруємо випадковими числами від -0.5 до 1.5
 
 input_neurons = 35  # initial layer
 hidden_neurons = 35 # or 18
@@ -39,6 +48,7 @@ accuracy_list = []
 neurons_input_to_hidden =  (hidden_neurons, input_neurons)
 neurons_hidden_to_output = (output_neurons, hidden_neurons)
 
+# Ініціалізація ваг. генеруємо випадковими числами від -0.5 до 1.5
 weight_input_to_hidden = np.random.uniform(-0.5, 1.5, neurons_input_to_hidden )
 weight_hidden_to_output = np.random.uniform(-0.5, 1.5, neurons_hidden_to_output )
 
@@ -49,6 +59,7 @@ bias_hidden_to_output = np.zeros((output_neurons,output_neurons))
 for epoch in range(epochs):
     correct_predictions = 0
     for image, label in zip(images, labels):
+        #перетворює зображення/метку в двовимірний масив з одним стовпцем
         image = np.reshape(image, (-1,1))
         label = np.reshape(label, (-1,1))
 
@@ -70,10 +81,7 @@ for epoch in range(epochs):
         )
 
         # Оновлення ваг і зсувів
-        weight_hidden_to_output += -learning_rate * delta_output @ np.transpose(hidden)
-        bias_hidden_to_output += -learning_rate * delta_output
-        weight_input_to_hidden += -learning_rate * delta_hidden @ np.transpose(image)
-        bias_input_to_hidden += -learning_rate * delta_hidden
+        update_weights_biases(learning_rate, delta_output, delta_hidden, hidden, image)
 
         # Підрахунок правильних прогнозів
         if np.round(output) == label:
