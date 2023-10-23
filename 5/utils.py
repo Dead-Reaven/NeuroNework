@@ -26,12 +26,9 @@ def load_dataset():
           [0, 1, 1, 1, 0]
       ],
     ]
-
-    weights = np.zeros((1, dim))
     images = [np.array(image).ravel() for image in initial_layer]
-    weights = [np.array(weight).ravel() for weight in weights]
-
-    return np.array(images), weights
+    print(f"patterns:" , images)
+    return np.array(images)
 
 # тестові вхідні данні, яких не було в датасеті
 zero = [
@@ -57,21 +54,13 @@ one = [
 
 def load_testdataset():
     #обираємо правильну відповідь, та генеруємо вектори "шуму"
-    #щоб заплутати SOM
     correct_answer = [5]
     initial_layer = [
-        np.random.uniform(0,1,(1, dim)),
-        np.random.uniform(0,1,(1, dim)),
-        np.random.uniform(0,1,(1, dim)),
-        np.random.uniform(0,1,(1, dim)),
-        np.random.uniform(0,1,(1, dim)),
+        one,
         zero,
-        np.random.uniform(0,1,(1, dim)),
-        np.random.uniform(0,1,(1, dim)),
-        np.random.uniform(0,1,(1, dim)),
-
-
     ]
-    images = [np.array(image).ravel().astype(np.float64) for image in initial_layer]
+    images = [np.array(image).ravel() for image in initial_layer]
+
+    print(f"test:" , images)
 
     return images , correct_answer

@@ -1,3 +1,4 @@
+#main.py
 import numpy as np
 import utils
 
@@ -12,13 +13,10 @@ class SOM:
                 winner = self.winner(sample)
                 # Оновлюємо переможний вектор ваги
                 self.update(sample, winner, alpha)
-        pass
 
     def winner(self, sample):
         # Розрахунок евклідової відстані між прикладом та кожним вектором ваги
-        # print(f"--sample: \n{sample},\n--weights: \n{self.weights}")
         distances = np.linalg.norm(self.weights - sample, axis=1)
-        # print("distances:\n", distances)
         # Повертаємо індекс вектора ваги з найменшою відстанню
         return np.argmin(distances)
 
@@ -28,12 +26,16 @@ class SOM:
 
 def main():
 
-    epochs = 35
+    #гіперпараметри епоха/коеф. навчання
+    epochs = 50
     alpha = 0.1
-    accuracity = 0
 
-    iterations = 1000
+    # аналіз
+    accuracity = 0
     stat = []
+
+    #повсторення тестування
+    iterations = 1000
 
     for _ in range(iterations):
         data, weight = utils.load_dataset()
@@ -47,11 +49,11 @@ def main():
         accuracity += 1 if test_winner in correct_answer else 0
 
         stat.append(test_winner)
+        #рахує скільки разів був обран кожен варіант
         counts = np.bincount(stat)
-        # Создание словаря для хранения результатов
+        # створюжмо словарь що виводить статистику по кожному обранному варіанту
         stat_dict = {str(i): counts[i] for i in range(np.max(stat) + 1)}
 
-    # print(f"winner №{i}: {test_winner}")
     print(f"accuracity: {accuracity}/{iterations}")
     print(f"Right answers: {correct_answer}\n")
     print(stat_dict)
